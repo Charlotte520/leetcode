@@ -1,0 +1,247 @@
+1. Two Sum
+无序数组，若有两数和等于target，返回两数的下标
+//用map记录元素到下标的关系，空间n。也可先排序再用双指针，时间nlogn
+public int[] twoSum(int[] nums, int target) {
+        if(nums == null || nums.length == 0 || nums.length == 1) {
+            return null;
+        }
+        Map<Integer,Integer> numToPos = new HashMap<>();
+        for (int i = 0; i < nums.length; i++) {
+            if (numToPos.containsKey(target - nums[i])) {
+                return new int[]{numToPos.get(target-nums[i]), i};
+            }
+            numToPos.put(nums[i],i);
+        }
+        return null;
+    }
+    
+26. Remove Duplicates from Sorted Array
+https://leetcode.com/problems/remove-duplicates-from-sorted-array/
+有序数组原地去重，使每个元素仅出现1次
+    if (nums == null || nums.length == 0) {
+            return 0;
+        }
+        int len = 0; //最后一个无重复元素的位置
+        for (int i = 1; i < nums.length; i++) {
+            if (nums[len] != nums[i]) {
+                nums[++len] = nums[i];
+            }
+        }
+        return len+1;
+    }
+36. Valid Sudoku
+https://leetcode.com/problems/valid-sudoku/
+public boolean isValidSudoku(char[][] board) {
+        boolean[] v = new boolean[10];//bool数组代替set
+        //判断行
+        for (int i = 0; i < 9; i++) {
+            Arrays.fill(v,false);
+            for (int j = 0; j < 9; j++) {
+                if (isProcessed(board[i][j], v))   return false;
+            }
+        }
+        
+        //判断列
+        for (int i = 0; i < 9; i++) {
+            Arrays.fill(v,false);
+            for (int j = 0; j < 9; j++) {
+                if (isProcessed(board[j][i], v))   return false;
+            }
+        }
+        
+        //判断9个小方格
+        for (int k = 0; k < 9; k++) {//也可用i=0..9,i+=3,每个小格/3或%3
+            Arrays.fill(v,false);
+            for (int i = 3*(k/3); i < 3*(k/3+1); i++) {
+                for (int j = 3*(k%3); j < 3*(k%3+1); j++) {
+                    if (isProcessed(board[i][j], v))   return false;
+                }
+            }
+        }
+        return true;
+    }
+     
+    private boolean isProcessed(char c, boolean[] v) { //抽取共同操作
+        if (c != '.') {
+            if (v[c-'0'] == true) return true;
+            v[c-'0'] = true;
+        }
+        return false;
+    }
+ 
+48. Rotate Image
+ 顺时针90度，先沿对角线折叠，再左右反转
+     public void rotate(int[][] matrix) {
+        for (int i = 0; i < matrix.length; i++) {
+            for (int j = i+1; j < matrix[0].length; j++) {
+                int tmp = matrix[i][j];
+                matrix[i][j] = matrix[j][i];
+                matrix[j][i] = tmp;
+            }
+        }
+        int i = 0;
+        int j = matrix[0].length - 1;
+        while (i < j) {
+            for (int k = 0; k < matrix.length; k++) {
+                int tmp = matrix[k][i];
+                matrix[k][i] = matrix[k][j];
+                matrix[k][j] = tmp;
+            }
+            i++;
+            j--;
+        }
+    }
+66. Plus One
+https://leetcode.com/problems/plus-one/ 
+    public int[] plusOne(int[] digits) {
+        int carry = 1;
+        for (int i = digits.length-1; i >= 0 && carry > 0; i--) {  //用carry==0提前结束
+            int cur = digits[i] + carry;
+            digits[i] = cur % 10;
+            carry = cur / 10;
+        }
+        
+        if (carry == 0)     return digits;
+        
+        int[] newResult = new int[digits.length+1];
+        newResult[0] = carry;
+        for (int i = 1; i < newResult.length; i++) {
+            newResult[i] = digits[i-1];
+        }
+        return newResult;
+    }
+
+122. Best Time to Buy and Sell Stock II
+https://leetcode.com/problems/best-time-to-buy-and-sell-stock-ii/
+不限买卖次数，必须先买后卖
+public int maxProfit1(int[] prices) {
+    if (prices == null || prices.length == 0) {
+        return 0;
+    }
+    int i = 0;
+    int result = 0;
+    while (i < prices.length) {
+        int j = i+1;
+        while(j < prices.length && prices[j] > prices[j-1]) { //单调递增序列，第一个买，最后一个卖
+            result += prices[j]-prices[j-1];
+            j++;
+        }
+        i = j;
+    }
+    return result;
+}
+
+public int maxProfit2(int[] prices) {
+    if (prices == null || prices.length == 0) {
+        return 0;
+    }
+    int result = 0;
+    for (int i = 0; i < prices.length -1; i++) {
+        int diff = prices[i+1]-prices[i];
+        if (diff > 0) {
+            result += diff;
+        }
+    }
+    return result;
+}
+
+136. Single number
+https://leetcode.com/problems/single-number/
+所有数都出现2次，只有一个出现1次。
+public int singleNumber(int[] nums) {
+        if (nums == null || nums.length == 0) {
+            return 0;
+        }
+        int result = 0;
+        for (int i = 0; i < nums.length; i++) {
+            result ^= nums[i]; //异或
+        }
+        return result;
+    }
+    
+189. Rotate Array
+https://leetcode.com/problems/rotate-array/
+三次旋转
+public void rotate(int[] nums, int k) {
+        if (nums == null || nums.length == 0) {
+            return;
+        }
+        
+        k = k%nums.length; //要取模
+        rotate(nums,0,nums.length-1);  //地址越界问题
+        rotate(nums,0,k-1);
+        rotate(nums,k,nums.length-1);
+    }
+    private void rotate(int[] nums, int i, int j) {
+        while (i < j) {
+            int tmp = nums[i];
+            nums[i]=nums[j];
+            nums[j]=tmp;
+            i++;
+            j--;
+        }
+    }
+
+217. Contains Duplicate
+https://leetcode.com/problems/contains-duplicate/
+无序数组是否有重复元素
+public boolean containsDuplicate(int[] nums) {
+        Set<Integer> s = new HashSet<>();
+        for (int i = 0; i < nums.length; i++) {
+            if (s.contains(nums[i]))    return true;
+            s.add(nums[i]);
+        }
+        return false;
+    }
+283. Move Zeroes
+将数组中的0移到右侧，其余按原顺序移到左侧
+public void moveZeroes(int[] nums) { //只用一个指针，需要后面补0
+        int pos = 0;
+        for (int i = 0; i < nums.length; i++) {
+            if (nums[i] != 0) nums[pos++] = nums[i];
+        }
+        for (int i = pos; i < nums.length; i++) {
+            nums[i] = 0;
+        }
+    }
+    
+     public void moveZeroes(int[] nums) {//双指针，直接将0和后面元素交换
+        int left = 0;
+        int right = 0;
+        while (right < nums.length) {
+            if (nums[right] != 0) {
+                int tmp = nums[left];
+                nums[left]= nums[right];
+                nums[right] = tmp;
+                left++;
+            }
+            right++;
+        }
+    }
+
+350. Intersection of Two Arrays II
+无序数组求交集，共同元素出现几次则出现在输出数组中几次。用map记录数组1的元素个数，遍历数组2,若有共同元素放入输出数组，并减map中的个数
+    
+ public int[] intersect(int[] nums1, int[] nums2) {
+        Map<Integer, Integer> map = new HashMap<>();
+        for(int i = 0; i < nums1.length; i++) {
+            if (map.containsKey(nums1[i])) {
+             map.put(nums1[i], map.get(nums1[i]) + 1);   
+            }
+            else map.put(nums1[i], 1);
+            
+        }
+        List<Integer> list = new ArrayList<>();
+        for(int i = 0; i < nums2.length; i++) {
+            if (map.containsKey(nums2[i]) && map.get(nums2[i]) > 0) {
+                list.add(nums2[i]);
+                map.put(nums2[i], map.get(nums2[i]) -1);
+            }
+        }
+    
+        int[] result = new int[list.size()];
+        for (int i = 0; i < list.size(); i++) {
+            result[i] = list.get(i);
+        }
+        return result;
+    }
