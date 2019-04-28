@@ -1,0 +1,73 @@
+7. Reverse Integer
+public int reverse(int x) {
+        int result = 0;
+        while (x != 0) {
+            int tmp = result*10 + x%10;
+            if (tmp / 10 != result)     return 0; //注意overflow
+            x /= 10;
+            result = tmp;
+        }
+        return result;
+    }
+125.Valid Palindrome
+忽略大小写，跳过非数字字母
+    public boolean isPalindrome(String s) {
+        int i = 0;
+        int j = s.length()-1;
+        while (i < j) {
+            while(i<j && !isAlphaNum(s.charAt(i))) i++;
+            while(i<j && !isAlphaNum(s.charAt(j)))  j--;
+            if (Character.toLowerCase(s.charAt(i)) != Character.toLowerCase(s.charAt(j))) return false;
+            i++;
+            j--;
+        }
+        return true;
+    }
+    private boolean isAlphaNum(char c) {
+        return Character.isLetter(c) || Character.isDigit(c);
+    }
+242. Valid Anagram
+map记录每个字符出现次数。也可用两个字符数组记录次数，再依次比较字符数组中的cnt是否相同。
+    public boolean isAnagram(String s, String t) {
+        Map<Character,Integer> map = new HashMap<>();
+        for (int i = 0; i < s.length(); i++) {
+            map.put(s.charAt(i), map.getOrDefault(s.charAt(i), 0) + 1);
+        }
+        for (int i = 0; i < t.length(); i++) {
+            if (!map.containsKey(t.charAt(i)))  return false;
+            int cnt = map.get(t.charAt(i)) - 1;
+            if (cnt > 0) {
+                map.put(t.charAt(i), cnt);    
+            } else {
+                map.remove(t.charAt(i));
+            }
+        }
+        if (map.size() == 0)    return true;
+        else return false;
+    }
+344. Reverse String
+原地反转字符数组
+    public void reverseString(char[] s) {
+        int i = 0;
+        int j = s.length - 1;
+        while(i<j) {
+            char c = s[i];
+            s[i] = s[j];
+            s[j] = c;
+            i++;
+            j--;
+        }
+    }
+    
+387. First Unique Character in a String
+public int firstUniqChar(String s) {  //扫第一遍记录次数，第二遍返回第一个出现1次的下标
+        int[] cnt = new int[26];
+        for (int i = 0; i < s.length(); i++) {
+            cnt[s.charAt(i)-'a']++;
+        }
+        for (int i = 0; i < s.length(); i++) {
+            if (cnt[s.charAt(i)-'a'] == 1) return i;
+        }
+        return -1;
+    }
+
