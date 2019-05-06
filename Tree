@@ -1,0 +1,43 @@
+    101. Symmetric Tree
+  public boolean isSymmetric(TreeNode root) {
+        if(root == null) return true;
+        //把问题变成判断两棵树是否是对称的
+        return isSym(root.left, root.right);
+    }
+    boolean isSym(TreeNode r1, TreeNode r2) {
+        if (r1 == null && r2 == null) return true;
+        if (r1 == null || r2 == null) return false;
+        return r1.val == r2.val && isSym(r1.left, r2.right) && isSym(r1.right, r2.left);
+    }
+    
+    105. 根据先序、中序构造二叉树
+     public TreeNode buildTree(int[] preorder, int[] inorder) {
+        if (preorder.length == 0 || inorder.length != preorder.length) return null;
+        Map<Integer, Integer> inElemPos = new HashMap<>();
+        for (int i = 0; i < inorder.length; i++) {
+            inElemPos.put(inorder[i], i);
+        }
+        return buildTree(preorder, inElemPos, 0, preorder.length - 1, 0);
+    }
+    //[prel,prer]为子树中的所有元素，inl表示该子树在inorder的起始位置，用于计算左右子树的大小
+    TreeNode buildTree(int[] preorder, Map<Integer, Integer> inElemPos, int preL, int preR, int inL) {
+        if (preL > preR) return null;
+        TreeNode cur = new TreeNode(preorder[preL]);
+        int leftTreeSize = inElemPos.get(cur.val)-inL;
+        cur.left = buildTree(preorder, inElemPos, preL+1,preL+leftTreeSize,inL);
+        cur.right = buildTree(preorder, inElemPos, preL+leftTreeSize+1, preR, inL+leftTreeSize+1);
+        return cur;
+    }
+    
+    110.平衡二叉树
+    bool isBalanced(TreeNode *root) {
+        return height(root) >= 0;
+    }
+    int height(TreeNode *root)
+    {
+        if(root == NULL)    return 0;
+        int lh = height(root->left);
+        int rh = height(root->right);
+        if(lh < 0 || rh < 0 || abs(lh-rh) > 1)  return -1;//每个节点都要判断子树高度
+        return max(lh,rh)+1;
+    }
