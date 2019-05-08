@@ -1,0 +1,24 @@
+20.有效括号
+    public boolean isValid(String s) {
+        if (s == null || s.length()%2 == 1) return false;
+        Stack<Character> stack = new Stack<>();
+        String left = "({[";
+        String right = ")}]";
+        for (int i = 0; i < s.length(); i++) {
+            char c = s.charAt(i);
+            if (left.indexOf(c) != -1) {
+                stack.push(c);
+            } else if (right.indexOf(c) != -1){
+                if (stack.isEmpty())  return false;
+                char top = stack.pop();
+                int idleft = left.indexOf(top);
+                int idright = right.indexOf(c);
+                if (idleft != idright) return false;
+            } else {
+                return  false;//error char
+            }
+        }
+        if (stack.isEmpty()) return true;
+        else return false;
+    }
+    
